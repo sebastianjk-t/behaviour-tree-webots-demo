@@ -1,0 +1,18 @@
+<sequence*>
+    [face obj]
+    <parallel>
+        <sequence*>
+            (isntBlocked obj)
+            [approach obj]
+        </sequence*>
+        [unGrip]
+        [gripAround obj]
+    </parallel>
+    [setHeight 0]
+    [grab obj]
+    [setHeight 1]
+    [face goal]
+    [approach goal]
+    [setHeight 1]
+    [unGrip]
+</sequence*>

@@ -1,0 +1,88 @@
+#VRML_SIM R2022b utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338dc679461bbd02643c140a85c49/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338dc679461bbd02643c140a85c49/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338dc679461bbd02643c140a85c49/projects/robots/kuka/youbot/protos/Youbot.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338dc679461bbd02643c140a85c49/projects/objects/solids/protos/SolidBox.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338dc679461bbd02643c140a85c49/projects/objects/balls/protos/Ball.proto"
+
+WorldInfo {
+  title "BT Test"
+  basicTimeStep 16
+  contactProperties [
+    ContactProperties {
+      material1 "InteriorWheelMat"
+      coulombFriction [
+        0, 2, 0
+      ]
+      frictionRotation -0.785398 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+    ContactProperties {
+      material1 "ExteriorWheelMat"
+      coulombFriction [
+        0, 2, 0
+      ]
+      frictionRotation 0.785398 0
+      bounce 0
+      forceDependentSlip [
+        10, 0
+      ]
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.2202661769800082 0.18427088226968563 0.9578763245984127 1.7904871153857056
+  position 0.6456036919232689 -3.3083269479481583 1.598750680533577
+}
+Background {
+  skyColor [
+    1 1 1
+  ]
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  floorSize 4 4
+}
+Youbot {
+  translation -1 0 0.12
+  controllerArgs [
+    ""
+    ""
+  ]
+  supervisor TRUE
+}
+DEF box SolidBox {
+  translation 0 0.5 0.02
+  size 0.04 0.04 0.04
+  appearance PBRAppearance {
+    baseColor 0 0.75 0.5
+    roughness 0.5
+    metalness 0
+  }
+  physics Physics {
+  }
+}
+DEF ball Ball {
+  translation 1 1 0.02
+  color 0 0.75 0.5
+  radius 0.02
+  centerOfMass [
+    0 0 0
+  ]
+  angularDamping 0
+}
+DEF goal SolidBox {
+  translation 1 -1 -0.0045
+  name "box(1)"
+  size 0.25 0.25 0.01
+  appearance PBRAppearance {
+    baseColor 0.5 0 1
+    roughness 0.5
+    metalness 0
+  }
+}

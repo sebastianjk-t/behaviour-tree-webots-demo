@@ -1,0 +1,39 @@
+<fallback>
+    (isOnGoal obj)
+    <sequence>
+        <fallback>
+            (isHeld obj)
+            <sequence>
+                <fallback>
+                    (isHeight 0)
+                    <sequence>
+                        <parallel>
+                            <fallback>
+                                (isAt obj)
+                                <sequence>
+                                    (isntBlocked obj)
+                                    [face obj]
+                                    [approach obj]
+                                </sequence>
+                            </fallback>
+                            [unGrip]
+                            [gripAround obj]
+                        </parallel>
+                        [setHeight 0]
+                    </sequence>
+                </fallback>
+                [grab obj]
+                [setHeight 1]
+            </sequence>
+        </fallback>
+        <fallback>
+            (isAt goal)
+            <sequence>
+                [face goal]
+                [approach goal]
+            </sequence>
+        </fallback>
+        [setHeight 1]
+        [unGrip]
+    </sequence>
+</fallback>
