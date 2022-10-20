@@ -24,7 +24,7 @@ int main(int n, char** input)
 
     bool usePlan = string(input[1]).empty();
     Object obj = (string(input[2]) == "ball") ? ball : box;
-    bool drop = false;
+    bool drop = true;
 
     Node* root;
 
@@ -33,16 +33,17 @@ int main(int n, char** input)
     else
         root = Manual::parseXML("xmls/" + string(input[1]) + ".xml", obj);
 
-    double start = wb_robot_get_time();
     int prevCount = -1;
+    double start = wb_robot_get_time();
 
-    while (wb_robot_step(timeStep) != -1)
+    for (int ticks = 0; wb_robot_step(timeStep) != -1; ticks++)
     {
         switch (root -> tick())
         {
             case SUCCESS: 
 
-                cout << wb_robot_get_time() - start << " seconds - " << count(root) << " nodes (success!)" << endl;
+                cout << ((string(input[1]).empty()) ? "pa-bt" : input[1]) << " - " << count(root) << " nodes (success!)" << endl;
+                cout << wb_robot_get_time() - start << " seconds - " << ticks << " ticks" << endl;
                 return deinit();
 
             case FAILURE: 
@@ -56,7 +57,8 @@ int main(int n, char** input)
                     
                 if (!usePlan || !root)
                 {
-                    cout << wb_robot_get_time() - start << " seconds - " << count(root) << " nodes (failure...)" << endl;
+                    cout << ((string(input[1]).empty()) ? "pa-bt" : input[1]) << " - " << count(root) << " nodes (failure :()" << endl;
+                    cout << wb_robot_get_time() - start << " seconds - " << ticks << " ticks" << endl;
                     return deinit();
                 }
 
@@ -67,7 +69,8 @@ int main(int n, char** input)
                 if (usePlan && count(root) != prevCount)
                 {
                     prevCount = count(root);
-                    cout << wb_robot_get_time() - start << " seconds - " << prevCount << " nodes" << endl;
+                    cout << ((string(input[1]).empty()) ? "pa-bt" : input[1]) << " - " << count(root) << " nodes (running...)" << endl;
+                    cout << wb_robot_get_time() - start << " seconds - " << ticks << " ticks" << endl;
                 }
 
                 if (drop && isFacing(goal))

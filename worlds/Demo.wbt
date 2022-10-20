@@ -7,7 +7,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/502bf0b7d9a338dc679461bbd02643c140a85c49/projects/objects/balls/protos/Ball.proto"
 
 WorldInfo {
-  title "BT Test"
+  title "BT Demo"
   basicTimeStep 16
   contactProperties [
     ContactProperties {
