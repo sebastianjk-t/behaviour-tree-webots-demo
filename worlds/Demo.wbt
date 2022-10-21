@@ -51,7 +51,7 @@ RectangleArena {
 Youbot {
   translation -1 0 0.12
   controllerArgs [
-    ""
+    "game"
     "box"
   ]
   supervisor TRUE

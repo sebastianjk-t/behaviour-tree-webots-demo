@@ -259,7 +259,7 @@ namespace Basic
 
         SequenceStar(std::vector<Node*> children = {}) : Sequence(children)
         {
-            
+            reset();
         }
 
         Status tick()
@@ -283,8 +283,7 @@ namespace Basic
                 index++;
             }
 
-            index = 0;
-
+            reset();
             return SUCCESS;
         }
 
@@ -299,11 +298,16 @@ namespace Basic
         void setChildren(std::vector<Node*> children)
         {
             this -> children = children;
+            reset();
+        }
+
+        void reset()
+        {
             index = 0;
         }
 
         private:
-        int index = 0;
+        int index;
     };
 
     class FallbackStar : public Fallback
@@ -312,7 +316,7 @@ namespace Basic
 
         FallbackStar(std::vector<Node*> children = {}) : Fallback(children)
         {
-            
+            reset();
         }
 
         Status tick()
@@ -336,8 +340,7 @@ namespace Basic
                 index++;
             }
 
-            index = 0;
-
+            reset();
             return FAILURE;
         }
 
@@ -352,11 +355,16 @@ namespace Basic
         void setChildren(std::vector<Node*> children)
         {
             this -> children = children;
+            reset();
+        }
+
+        void reset()
+        {
             index = 0;
         }
 
         private:
-        int index = 0;
+        int index;
     };
 
     class Inverter : public Decorator
@@ -382,6 +390,37 @@ namespace Basic
                     return RUNNING;
             }
         }
+    };
+
+    class PercentSuccess : public Decorator
+    {
+        public:
+
+        PercentSuccess(Node* child, int percent) : Decorator(child)
+        {
+            this -> percent = percent;
+        }
+
+        Status tick()
+        {
+            switch (child -> tick())
+            {
+                case FAILURE:
+                    return FAILURE;
+
+                case SUCCESS:
+                    if (rand() % 100 < percent)
+                        return SUCCESS;
+
+                    return FAILURE;
+
+                case RUNNING:
+                    return RUNNING;
+            }
+        }
+
+        private:
+        int percent;
     };
 
     template <typename... Ts>
@@ -435,33 +474,6 @@ namespace Basic
 
         protected:
         std::function<bool(Ts...)> condition;
-        std::tuple<Ts...> args;
-    };
-
-    template <typename T, typename... Ts>
-    class ForcedAction : public Node
-    {
-        public:
-
-        ForcedAction(std::function<T(Ts...)> action, Ts... args)
-        {
-            this -> action = action;
-            setArgs(args...);
-        }
-
-        Status tick()
-        {
-            std::apply(action, args);
-            return SUCCESS;
-        }
-
-        void setArgs(Ts... args)
-        {
-            this -> args = {args...};
-        }
-
-        protected:
-        std::function<T(Ts...)> action;
         std::tuple<Ts...> args;
     };
 }

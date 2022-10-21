@@ -326,20 +326,17 @@ namespace YouBot
 
     bool isGrabbed(Object obj)
     {
-        /*if (obj == objects[0])
+        if (obj == objects[0])
             return wb_position_sensor_get_value(gripper[0].sensor) + wb_position_sensor_get_value(gripper[1].sensor) < 0.0175;
         else if (obj == objects[1])
-            return wb_position_sensor_get_value(gripper[0].sensor) + wb_position_sensor_get_value(gripper[1].sensor) < 0.01;*/
+            return wb_position_sensor_get_value(gripper[0].sensor) + wb_position_sensor_get_value(gripper[1].sensor) < 0.01;
 
         return false;
     }
 
     Status grab(Object obj)
     {
-        if (obj == objects[0] && wb_position_sensor_get_value(gripper[0].sensor) + wb_position_sensor_get_value(gripper[1].sensor) < 0.0175)
-            return SUCCESS;
-        
-        if (obj == objects[1] && wb_position_sensor_get_value(gripper[0].sensor) + wb_position_sensor_get_value(gripper[1].sensor) < 0.01)
+        if (isGrabbed(obj))
             return SUCCESS;
 
         grip();
@@ -368,20 +365,6 @@ namespace YouBot
 
         turnRight(1.0 / getRelAng(obj));
         return RUNNING;
-    }
-
-    bool isEmpty()
-    {
-        for (Object obj : objects)
-            if (isHeld(obj))
-                return false;
-
-        return true;
-    }
-
-    bool isStored(Object obj)
-    {
-        return areSame(getPos(obj)[2], 0.17) && std::abs(getRelAng(obj)) > M_PI_2;
     }
 
     bool isntBlocked(Object obj)

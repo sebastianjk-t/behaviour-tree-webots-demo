@@ -104,8 +104,8 @@ namespace PABT
             return boxIsOnGoal;
         else if (obj == ball)
             return ballIsOnGoal;
-        else
-            return new Sequence({boxIsOnGoal, ballIsOnGoal});
+        
+        return new Fallback({new PercentSuccess(boxIsOnGoal, 40), new PercentSuccess(ballIsOnGoal, 60)}); // smart swaps first tick
     }
 
     Node* replan(Node*& root)

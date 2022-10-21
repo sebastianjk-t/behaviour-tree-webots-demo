@@ -60,8 +60,6 @@ namespace Manual
                         nodes.push_back(new Condition<Object>(isGrippedAround, arg));
                     else if (lines[i].find("isFacingAway") != -1)
                         nodes.push_back(new Condition<Object>(isFacingAway, arg));
-                    else if (lines[i].find("isEmpty") != -1)
-                        nodes.push_back(new Condition<>(isEmpty));
                     else if (lines[i].find("isntBlocked") != -1)
                         nodes.push_back(new Condition<Object>(isntBlocked, arg));
                     else if (lines[i].find("face") != -1)
@@ -105,6 +103,8 @@ namespace Manual
                         nodes.push_back(new SequenceStar(children));
                     else if (nodeType == "fallback*")
                         nodes.push_back(new FallbackStar(children));
+                    else if (nodeType.find("percentSuccess") != -1)
+                        nodes.push_back(new PercentSuccess(children[0], std::stoi(nodeType.substr(nodeType.find(' ') + 1))));
                 }
             }
         }

@@ -47,7 +47,7 @@ namespace Smart
             if (!completions)
                 return 0.5;
 
-            return successes / completions;
+            return (float) successes / (float) completions;
         }
 
         private:
@@ -114,7 +114,7 @@ namespace Smart
         std::vector<Node*> children;
     };
 
-    bool compare(Node* a, Node* b)
+    bool compare(Node*& a, Node*& b)
     {
         return a -> getProb() > b -> getProb();
     }
@@ -130,7 +130,7 @@ namespace Smart
 
         Status tick()
         {
-            std::sort(children.begin(), children.end(), compare);
+            std::sort(children.begin() + (children.front() -> getChildren().empty()), children.end(), compare); // pa-bt compatible
 
             for (Node* child : children)
             {
@@ -176,7 +176,7 @@ namespace Smart
     {
         public:
 
-        Parallel(std::vector<Node*> children = {}, int threshold = 0)
+        Parallel(std::vector<Node*> children = {}, int threshold = -1)
         {
             setChildren(children);
             setThreshold(threshold);
@@ -240,10 +240,12 @@ namespace Smart
 
         bool setThreshold(int threshold)
         {
-            if (threshold >= 0 && threshold <= children.size())
+            if (threshold == -1)
+                this -> threshold = children.size();
+            else if (threshold >= 0 && threshold <= children.size())
                 this -> threshold = threshold;
 
-            return (threshold >= 0 && threshold <= children.size());
+            return (threshold >= 1 && threshold <= children.size());
         }
 
         protected:
@@ -294,7 +296,7 @@ namespace Smart
 
         SequenceStar(std::vector<Node*> children = {}) : Sequence(children)
         {
-            
+            reset();
         }
 
         Status tick()
@@ -318,8 +320,7 @@ namespace Smart
                 index++;
             }
 
-            index = 0;
-
+            reset();
             return SUCCESS;
         }
 
@@ -334,11 +335,16 @@ namespace Smart
         void setChildren(std::vector<Node*> children)
         {
             this -> children = children;
+            reset();
+        }
+
+        void reset()
+        {
             index = 0;
         }
 
         private:
-        int index = 0;
+        int index;
     };
 
     class FallbackStar : public Fallback
@@ -347,13 +353,13 @@ namespace Smart
 
         FallbackStar(std::vector<Node*> children = {}) : Fallback(children)
         {
-            
+            reset();
         }
 
         Status tick()
         {
             if (!index) // only reorder when completed
-                std::sort(children.begin(), children.end(), compare);
+                std::sort(children.begin() + (children.front() -> getChildren().empty()), children.end(), compare); // pa-bt compatible
 
             int n = children.size();
 
@@ -390,11 +396,16 @@ namespace Smart
         void setChildren(std::vector<Node*> children)
         {
             this -> children = children;
+            reset();
+        }
+
+        void reset()
+        {
             index = 0;
         }
 
         private:
-        int index = 0;
+        int index;
     };
 
     class Inverter : public Decorator
@@ -408,7 +419,7 @@ namespace Smart
 
         Status tick()
         {
-            switch (child -> tick())
+            switch (child -> smartick())
             {
                 case FAILURE:
                     return SUCCESS;
@@ -420,6 +431,37 @@ namespace Smart
                     return RUNNING;
             }
         }
+    };
+
+    class PercentSuccess : public Decorator
+    {
+        public:
+
+        PercentSuccess(Node* child, int percent) : Decorator(child)
+        {
+            this -> percent = percent;
+        }
+
+        Status tick()
+        {
+            switch (child -> smartick())
+            {
+                case FAILURE:
+                    return FAILURE;
+
+                case SUCCESS:
+                    if (rand() % 100 < percent)
+                        return SUCCESS;
+
+                    return FAILURE;
+
+                case RUNNING:
+                    return RUNNING;
+            }
+        }
+
+        private:
+        int percent;
     };
 
     template <typename... Ts>
@@ -473,33 +515,6 @@ namespace Smart
 
         protected:
         std::function<bool(Ts...)> condition;
-        std::tuple<Ts...> args;
-    };
-
-    template <typename T, typename... Ts>
-    class ForcedAction : public Node
-    {
-        public:
-
-        ForcedAction(std::function<T(Ts...)> action, Ts... args)
-        {
-            this -> action = action;
-            setArgs(args...);
-        }
-
-        Status tick()
-        {
-            std::apply(action, args);
-            return SUCCESS;
-        }
-
-        void setArgs(Ts... args)
-        {
-            this -> args = {args...};
-        }
-
-        protected:
-        std::function<T(Ts...)> action;
         std::tuple<Ts...> args;
     };
 };

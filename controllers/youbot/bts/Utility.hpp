@@ -114,25 +114,23 @@ namespace Utility
         std::vector<Node*> children;
     };
 
-    bool compare(Node* a, Node* b)
+    bool compare(Node*& a, Node*& b)
     {
-        return a -> query() < b -> query();
+        return a -> query() > b -> query();
     }
 
     class Fallback : public Node
     {
         public:
         
-        Fallback(std::vector<Node*> children = {}, bool isUtility = true)
+        Fallback(std::vector<Node*> children = {})
         {
             setChildren(children);
-            this -> isUtility = isUtility;
         }
 
         Status tick()
         {
-            if (isUtility)
-                std::sort(children.begin(), children.end(), compare);
+            std::sort(children.begin() + (children.front() -> getChildren().empty()), children.end(), compare); // pa-bt compatible
 
             for (Node* child : children)
             {
@@ -189,14 +187,13 @@ namespace Utility
 
         protected:
         std::vector<Node*> children;
-        bool isUtility;
     };
 
     class Parallel : public Node
     {
         public:
 
-        Parallel(std::vector<Node*> children = {}, int threshold = 0)
+        Parallel(std::vector<Node*> children = {}, int threshold = -1)
         {
             setChildren(children);
             setThreshold(threshold);
@@ -277,10 +274,12 @@ namespace Utility
 
         bool setThreshold(int threshold)
         {
-            if (threshold >= 0 && threshold <= children.size())
+            if (threshold == -1)
+                this -> threshold = children.size();
+            else if (threshold >= 0 && threshold <= children.size())
                 this -> threshold = threshold;
 
-            return (threshold >= 0 && threshold <= children.size());
+            return (threshold >= 1 && threshold <= children.size());
         }
 
         protected:
@@ -340,7 +339,7 @@ namespace Utility
 
         SequenceStar(std::vector<Node*> children = {}) : Sequence(children)
         {
-            
+            reset();
         }
 
         Status tick()
@@ -364,8 +363,7 @@ namespace Utility
                 index++;
             }
 
-            index = 0;
-
+            reset();
             return SUCCESS;
         }
 
@@ -380,7 +378,7 @@ namespace Utility
         void setChildren(std::vector<Node*> children)
         {
             this -> children = children;
-            index = 0;
+            reset();
 
             utility = 0;
             
@@ -388,23 +386,28 @@ namespace Utility
                 utility = std::max(utility, child -> query());
         }
 
+        void reset()
+        {
+            index = 0;
+        }
+
         private:
-        int index = 0;
+        int index;
     };
 
     class FallbackStar : public Fallback
     {
         public:
 
-        FallbackStar(std::vector<Node*> children = {}, bool isUtility = true) : Fallback(children, isUtility)
+        FallbackStar(std::vector<Node*> children = {}) : Fallback(children)
         {
-            
+            reset();
         }
 
         Status tick()
         {
-            if (isUtility && !index) // only reorder when completed
-                std::sort(children.begin(), children.end(), compare);
+            if (!index) // only reorder when completed
+                std::sort(children.begin() + (children.front() -> getChildren().empty()), children.end(), compare); // pa-bt compatible
 
             int n = children.size();
 
@@ -425,8 +428,7 @@ namespace Utility
                 index++;
             }
 
-            index = 0;
-
+            reset();
             return FAILURE;
         }
 
@@ -441,7 +443,7 @@ namespace Utility
         void setChildren(std::vector<Node*> children)
         {
             this -> children = children;
-            index = 0;
+            reset();
 
             utility = 0;
             
@@ -449,8 +451,13 @@ namespace Utility
                 utility = std::max(utility, child -> query());
         }
 
+        void reset()
+        {
+            index = 0;
+        }
+
         private:
-        int index = 0;
+        int index;
     };
 
     class Inverter : public Decorator
@@ -476,6 +483,37 @@ namespace Utility
                     return RUNNING;
             }
         }
+    };
+
+    class PercentSuccess : public Decorator
+    {
+        public:
+
+        PercentSuccess(Node* child, int percent) : Decorator(child)
+        {
+            this -> percent = percent;
+        }
+
+        Status tick()
+        {
+            switch (child -> tick())
+            {
+                case FAILURE:
+                    return FAILURE;
+
+                case SUCCESS:
+                    if (rand() % 100 < percent)
+                        return SUCCESS;
+
+                    return FAILURE;
+
+                case RUNNING:
+                    return RUNNING;
+            }
+        }
+
+        private:
+        int percent;
     };
 
     template <typename... Ts>
@@ -531,34 +569,6 @@ namespace Utility
 
         protected:
         std::function<bool(Ts...)> condition;
-        std::tuple<Ts...> args;
-    };
-
-    template <typename T, typename... Ts>
-    class ForcedAction : public Node
-    {
-        public:
-
-        ForcedAction(std::function<T(Ts...)> action, Ts... args, int utility)
-        {
-            this -> action = action;
-            setArgs(args...);
-            setUtility(utility);
-        }
-
-        Status tick()
-        {
-            std::apply(action, args);
-            return SUCCESS;
-        }
-
-        void setArgs(Ts... args)
-        {
-            this -> args = {args...};
-        }
-
-        protected:
-        std::function<T(Ts...)> action;
         std::tuple<Ts...> args;
     };
 };
