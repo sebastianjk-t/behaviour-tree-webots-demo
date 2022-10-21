@@ -1,5 +1,5 @@
 #include "Manual.hpp"
-#include "PA-BT.hpp"
+#include "IPA-BT.hpp"
 #include <iostream>
 
 using namespace std;
@@ -24,7 +24,7 @@ int main(int n, char** input)
 
     bool usePlan = string(input[1]).empty();
     Object obj = (string(input[2]) == "ball") ? ball : box;
-    bool drop = true;
+    bool drop = false;
 
     Node* root;
 
@@ -48,13 +48,9 @@ int main(int n, char** input)
 
             case FAILURE: 
 
-                cout << count(root) << endl;
-
                 if (usePlan)
                     root = PABT::replan(root);
 
-                cout << count(root) << endl;
-                    
                 if (!usePlan || !root)
                 {
                     cout << ((string(input[1]).empty()) ? "pa-bt" : input[1]) << " - " << count(root) << " nodes (failure :()" << endl;
