@@ -1,0 +1,84 @@
+<fallback*>
+    <percentSuccess 80>
+        <fallback>
+            (isOnGoal box)
+            <sequence>
+                <fallback>
+                    (isHeld box)
+                    <sequence>
+                        <fallback>
+                            (isHeight 0)
+                            <sequence>
+                                <parallel>
+                                    <fallback>
+                                        (isAt box)
+                                        <sequence>
+                                            [face box]
+                                            [approach box]
+                                        </sequence>
+                                    </fallback>
+                                    [face box]
+                                    [unGrip]
+                                    [gripAround box]
+                                </parallel>
+                                [setHeight 0]
+                            </sequence>
+                        </fallback>
+                        [grab box]
+                        [setHeight 1]
+                    </sequence>
+                </fallback>
+                <fallback>
+                    (isAt goal)
+                    <sequence>
+                        [face goal]
+                        [approach goal]
+                    </sequence>
+                </fallback>
+                [setHeight 1]
+                [unGrip]
+            </sequence>
+        </fallback>
+    </percentSuccess>
+    <percentSuccess 20>
+        <fallback>
+            (isOnGoal ball)
+            <sequence>
+                <fallback>
+                    (isHeld ball)
+                    <sequence>
+                        <fallback>
+                            (isHeight 0)
+                            <sequence>
+                                <parallel>
+                                    <fallback>
+                                        (isAt ball)
+                                        <sequence>
+                                            [face ball]
+                                            [approach ball]
+                                        </sequence>
+                                    </fallback>
+                                    [face ball]
+                                    [unGrip]
+                                    [gripAround ball]
+                                </parallel>
+                                [setHeight 0]
+                            </sequence>
+                        </fallback>
+                        [grab ball]
+                        [setHeight 1]
+                    </sequence>
+                </fallback>
+                <fallback>
+                    (isAt goal)
+                    <sequence>
+                        [face goal]
+                        [approach goal]
+                    </sequence>
+                </fallback>
+                [setHeight 1]
+                [unGrip]
+            </sequence>
+        </fallback>
+    </percentSuccess>
+</fallback*>

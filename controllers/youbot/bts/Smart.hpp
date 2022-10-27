@@ -338,6 +338,11 @@ namespace Smart
             reset();
         }
 
+        int getIndex()
+        {
+            return index;
+        }
+
         void reset()
         {
             index = 0;
@@ -397,6 +402,11 @@ namespace Smart
         {
             this -> children = children;
             reset();
+        }
+
+        int getIndex()
+        {
+            return index;
         }
 
         void reset()

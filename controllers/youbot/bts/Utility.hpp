@@ -34,6 +34,11 @@ namespace Utility
             this -> utility = utility;
         }
 
+        void increaseUtility(int amt = 1)
+        {
+            utility += amt;
+        }
+
         protected:
         int utility = 0;
     };
@@ -386,6 +391,11 @@ namespace Utility
                 utility = std::max(utility, child -> query());
         }
 
+        int getIndex()
+        {
+            return index;
+        }
+
         void reset()
         {
             index = 0;
@@ -449,6 +459,11 @@ namespace Utility
             
             for (Node* child : children)
                 utility = std::max(utility, child -> query());
+        }
+
+        int getIndex()
+        {
+            return index;
         }
 
         void reset()
@@ -521,11 +536,10 @@ namespace Utility
     {
         public:
 
-        Action(std::function<Status(Ts...)> action, Ts... args, int utility)
+        Action(std::function<Status(Ts...)> action, Ts... args)
         {
             this -> action = action;
             setArgs(args...);
-            setUtility(utility);
         }
 
         Status tick()
@@ -547,11 +561,10 @@ namespace Utility
     class Condition : public Node
     {
         public:
-        Condition(std::function<bool(Ts...)> condition, Ts... args, int utility)
+        Condition(std::function<bool(Ts...)> condition, Ts... args)
         {
             this -> condition = condition;
             setArgs(args...);
-            setUtility(utility);
         }
 
         Status tick()

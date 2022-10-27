@@ -301,6 +301,11 @@ namespace Basic
             reset();
         }
 
+        int getIndex()
+        {
+            return index;
+        }
+
         void reset()
         {
             index = 0;
@@ -356,6 +361,11 @@ namespace Basic
         {
             this -> children = children;
             reset();
+        }
+
+        int getIndex()
+        {
+            return index;
         }
 
         void reset()

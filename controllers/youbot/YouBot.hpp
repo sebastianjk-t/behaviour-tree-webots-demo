@@ -15,7 +15,7 @@
 #include "bts/Smart.hpp"
 #include "bts/Utility.hpp"
 
-using namespace Basic;
+using namespace Utility;
 
 struct Object
 {
