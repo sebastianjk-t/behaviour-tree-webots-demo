@@ -377,31 +377,6 @@ namespace Basic
         int index;
     };
 
-    class Inverter : public Decorator
-    {
-        public:
-
-        Inverter(Node* child) : Decorator(child)
-        {
-            
-        }
-
-        Status tick()
-        {
-            switch (child -> tick())
-            {
-                case FAILURE:
-                    return SUCCESS;
-
-                case SUCCESS:
-                    return FAILURE;
-
-                case RUNNING:
-                    return RUNNING;
-            }
-        }
-    };
-
     class PercentSuccess : public Decorator
     {
         public:
