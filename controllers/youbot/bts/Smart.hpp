@@ -301,11 +301,9 @@ namespace Smart
 
         Status tick()
         {
-            int n = children.size();
-
-            while (index < n)
+            for (int n = children.size(); index < n; index++)
             {
-                switch (children[index] -> smartick())
+                switch (children[index] -> tick())
                 {                
                     case RUNNING:
                         return RUNNING;
@@ -316,8 +314,6 @@ namespace Smart
                     case SUCCESS:
                         break;
                 }
-
-                index++;
             }
 
             reset();
@@ -366,11 +362,9 @@ namespace Smart
             if (!index) // only reorder when completed
                 std::sort(children.begin() + (children.front() -> getChildren().empty()), children.end(), compare); // pa-bt compatible
 
-            int n = children.size();
-
-            while (index < n)
+            for (int n = children.size(); index < n; index++)
             {
-                switch (children[index] -> smartick())
+                switch (children[index] -> tick())
                 {                
                     case RUNNING:
                         return RUNNING;
@@ -381,12 +375,9 @@ namespace Smart
                     case FAILURE:
                         break;
                 }
-
-                index++;
             }
 
-            index = 0;
-
+            reset();
             return FAILURE;
         }
 

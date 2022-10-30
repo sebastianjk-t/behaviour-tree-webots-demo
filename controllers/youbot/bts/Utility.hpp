@@ -349,9 +349,7 @@ namespace Utility
 
         Status tick()
         {
-            int n = children.size();
-
-            while (index < n)
+            for (int n = children.size(); index < n; index++)
             {
                 switch (children[index] -> tick())
                 {                
@@ -364,8 +362,6 @@ namespace Utility
                     case SUCCESS:
                         break;
                 }
-
-                index++;
             }
 
             reset();
@@ -419,9 +415,7 @@ namespace Utility
             if (!index) // only reorder when completed
                 std::sort(children.begin() + (children.front() -> getChildren().empty()), children.end(), compare); // pa-bt compatible
 
-            int n = children.size();
-
-            while (index < n)
+            for (int n = children.size(); index < n; index++)
             {
                 switch (children[index] -> tick())
                 {                
@@ -434,8 +428,6 @@ namespace Utility
                     case FAILURE:
                         break;
                 }
-
-                index++;
             }
 
             reset();

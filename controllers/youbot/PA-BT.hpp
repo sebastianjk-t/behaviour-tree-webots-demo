@@ -111,8 +111,7 @@ namespace PABT
     Node* replan(Node*& root)
     {
         Node*& condition = (root -> getChildren().empty()) ? root : root -> getFailure();
-        std::vector<Node*> actions, temp;
-        Node* fallback = new Fallback({condition}),* sequence;
+        std::vector<Node*> actions, temp, fallback{condition};
 
         for (auto pair : postConditions)
             if (pair.second == condition)
@@ -130,15 +129,10 @@ namespace PABT
                     temp.push_back(cond);
 
             temp.push_back(action);
-            sequence = new Sequence(temp);
-
-            temp = fallback -> getChildren();
-            temp.push_back(sequence);
-            ((Fallback*) fallback) -> setChildren(temp);
+            fallback.push_back(new Sequence(temp));
         }
 
-        condition = fallback;
-
+        condition = new Fallback(fallback);
         return root;
     }
 }

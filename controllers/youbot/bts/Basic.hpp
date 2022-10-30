@@ -264,9 +264,7 @@ namespace Basic
 
         Status tick()
         {
-            int n = children.size();
-
-            while (index < n)
+            for (int n = children.size(); index < n; index++)
             {
                 switch (children[index] -> tick())
                 {                
@@ -279,8 +277,6 @@ namespace Basic
                     case SUCCESS:
                         break;
                 }
-
-                index++;
             }
 
             reset();
@@ -326,9 +322,7 @@ namespace Basic
 
         Status tick()
         {
-            int n = children.size();
-
-            while (index < n)
+            for (int n = children.size(); index < n; index++)
             {
                 switch (children[index] -> tick())
                 {                
@@ -341,8 +335,6 @@ namespace Basic
                     case FAILURE:
                         break;
                 }
-
-                index++;
             }
 
             reset();

@@ -97,8 +97,6 @@ namespace Manual
                         nodes.push_back(new Parallel(children));
                     else if (nodeType == "decorator")
                         nodes.push_back(new Decorator(children[0]));
-                    else if (nodeType == "inverter")
-                        nodes.push_back(new Inverter(children[0]));
                     else if (nodeType == "sequence*")
                         nodes.push_back(new SequenceStar(children));
                     else if (nodeType == "fallback*")
