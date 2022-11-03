@@ -26,7 +26,7 @@ int main(int n, char** input)
 
     bool drop = false, pabt = false, ipabt = false, game = false;
     Object obj = ball;
-    const double pos[3] = {-2, 0, 0.02}, rot[4] = {0, 0, 1, 0};
+    const double pos[3] = {-4, 0, 0.02}, rot[4] = {0, 0, 1, 0};
 
     if (string(input[1]) == "easy")
     {
